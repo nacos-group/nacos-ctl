@@ -1,11 +1,12 @@
 package com.alibaba.nacos.cli.commands.cluster;
 
 import com.alibaba.nacos.cli.core.LogicHandler;
+import com.alibaba.nacos.cli.core.bean.ClusterVo;
+import com.alibaba.nacos.cli.core.exception.HandlerException;
 import de.vandermeer.asciitable.AsciiTable;
 import picocli.CommandLine;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.alibaba.nacos.cli.utils.HintUtils.DESCRIPTION_HEADING;
 import static com.alibaba.nacos.cli.utils.HintUtils.HEADER_HEADING;
@@ -42,20 +43,37 @@ public class NacosClusterList implements Runnable {
     @Override
     public void run() {
         String keyword = ip;
-        if (!(ip.isEmpty() && port.isEmpty())) {
+        if (!ip.isEmpty() && !port.isEmpty()) {
             keyword += ":";
         }
         keyword += port;
-        List<Map<String, Object>> list = LogicHandler.listCluster(keyword, pageNo, pageSize);
+        try {
+            System.out.println(
+                    drawingTable(LogicHandler.listCluster(keyword, pageNo, pageSize)).render()
+            );
+        } catch (HandlerException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    private AsciiTable drawingTable(List<ClusterVo> vo) {
         AsciiTable at = new AsciiTable();
+        this.definitionTableHead(at);
+        this.fillData(at, vo);
+        return at;
+    }
+    
+    private void fillData(AsciiTable at, List<ClusterVo> vo) {
+        for (ClusterVo row : vo) {
+            at.addRow(row.getIp(), row.getPort(), row.getState());
+        }
+        at.addRule();
+    }
+    
+    private void definitionTableHead(AsciiTable at) {
         at.getContext().setWidth(60);
         at.addRule();
         at.addRow("ip", "port", "state");
         at.addRule();
-        for (Map<String, Object> row : list) {
-            at.addRow(row.get("ip"), ((Double) row.get("port")).intValue(), row.get("state"));
-        }
-        at.addRule();
-        System.out.println(at.render());
     }
 }

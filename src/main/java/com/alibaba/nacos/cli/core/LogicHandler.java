@@ -2,6 +2,7 @@ package com.alibaba.nacos.cli.core;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.cli.config.GlobalConfig;
+import com.alibaba.nacos.cli.core.bean.ClusterVo;
 import com.alibaba.nacos.cli.core.bean.ConfigVO;
 import com.alibaba.nacos.cli.core.bean.NamespaceVO;
 import com.alibaba.nacos.cli.core.bean.ServiceVO;
@@ -10,15 +11,8 @@ import com.alibaba.nacos.cli.core.service.openapi.OpenApiService;
 import com.alibaba.nacos.cli.core.service.sdk.SdkConfigService;
 import com.alibaba.nacos.cli.core.service.sdk.SdkNamingService;
 import com.alibaba.nacos.cli.utils.SwitchUtils;
-import com.alibaba.nacos.client.naming.utils.UtilAndComs;
-import com.alibaba.nacos.common.tls.TlsSystemConfig;
 import com.google.gson.Gson;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -37,6 +31,8 @@ public class LogicHandler {
     private static SdkNamingService sdkNamingService;
     
     private static GlobalConfig config;
+    
+    private static Gson gson = new Gson();
     
     
     public static void init() throws HandlerException {
@@ -223,26 +219,8 @@ public class LogicHandler {
      * @param pageNo pageNo
      * @param pageSize pageSize
      */
-    public static List<Map<String, Object>> listCluster(String str, Integer pageNo, Integer pageSize) {
-        GlobalConfig instance = GlobalConfig.getInstance();
-        List list = new ArrayList();
-        String url  = "";
-        url += ENABLE_HTTPS ? UtilAndComs.HTTPS : UtilAndComs.HTTP;
-        try {
-            URL uri = new URL(url + instance.getHost() + ":" + instance.getPort()
-                    + UtilAndComs.nacosUrlBase.subSequence(0, UtilAndComs.nacosUrlBase.length() - 3)
-                    + "/core/cluster/nodes?pageNo=" + pageNo + "pageSize=" + pageSize + "keyword=" + str);
-            URLConnection connection = uri.openConnection();
-            InputStream in = connection.getInputStream();
-            InputStreamReader reader = new InputStreamReader(in);
-            Gson gson = new Gson();
-            Map map = gson.fromJson(reader, Map.class);
-            return (List) map.get("data");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return list;
+    public static List<ClusterVo> listCluster(String str, Integer pageNo, Integer pageSize)
+            throws HandlerException {
+        return openApiService.listCluster(str, pageNo, pageSize);
     }
-    
-    private static final boolean ENABLE_HTTPS = Boolean.getBoolean(TlsSystemConfig.TLS_ENABLE);
 }

@@ -1,15 +1,20 @@
 package com.alibaba.nacos.cli.core.service.openapi;
 
 import com.alibaba.nacos.cli.config.GlobalConfig;
+import com.alibaba.nacos.cli.core.bean.ClusterVo;
 import com.alibaba.nacos.cli.core.bean.ConfigVO;
 import com.alibaba.nacos.cli.core.bean.NamespaceVO;
 import com.alibaba.nacos.cli.core.bean.ServiceVO;
 import com.alibaba.nacos.cli.core.exception.HandlerException;
 import com.alibaba.nacos.cli.core.service.openapi.network.HttpProvider;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -30,12 +35,16 @@ public class OpenApiService {
   private static final String SERVICE_URL = "/ns/service";
 
   private static final String INSTANCE_URL = "/ns/instance";
+  
+  private static final String CLUSTER_URL = "/core/cluster";
 
   private GlobalConfig config = GlobalConfig.getInstance();
 
   private HttpProvider httpProvider = new HttpProvider();
 
   private boolean debugOn = false;
+  
+  private Gson gson = new Gson();
 
   public String updateSwitch(String entry, String value, Boolean debug) throws HandlerException {
     if(debug){
@@ -297,5 +306,18 @@ public class OpenApiService {
     String ret = httpProvider.prometheusRequest();
     String[] lines = ret.split("\n");
     return Arrays.stream(lines).filter(s -> !s.startsWith("#"));
+  }
+  
+  public List<ClusterVo> listCluster(String str, Integer pageNo, Integer pageSize) throws HandlerException {
+    HashMap<String, Object> params = new HashMap<>();
+    params.put("keyword", str);
+    params.put("pageNo", pageNo);
+    params.put("pageSize", pageSize);
+    String result = httpProvider.nacosRequest(GET, CLUSTER_URL + "/nodes", params);
+    JsonObject jsonObj = gson.fromJson(result, JsonObject.class);
+    JsonElement data = jsonObj.get("data");
+    Type type = new TypeToken<List<ClusterVo>>(){}.getType();
+    List<ClusterVo> list = gson.fromJson(data.toString(), type);
+    return list;
   }
 }
