@@ -10,21 +10,21 @@ import java.util.concurrent.Executor;
  * @author lehr
  */
 public class InstanceWatcher extends AbstractEventListener {
-
-  Executor executor;
-
-  public InstanceWatcher(Executor executor) {
-    this.executor = executor;
-  }
-
-  @Override
-  public Executor getExecutor() {
-    return executor;
-  }
-
-  @Override
-  public void onEvent(Event event) {
-    System.out.println("serviceName: " + ((NamingEvent) event).getServiceName());
-    System.out.println("instances from event: " + ((NamingEvent) event).getInstances());
-  }
+    
+    Executor executor;
+    
+    public InstanceWatcher(Executor executor) {
+        this.executor = executor;
+    }
+    
+    @Override
+    public Executor getExecutor() {
+        return executor;
+    }
+    
+    @Override
+    public void onEvent(Event event) {
+        System.out.println("serviceName: " + ((NamingEvent) event).getServiceName());
+        System.out.println("instances from event: " + ((NamingEvent) event).getInstances());
+    }
 }

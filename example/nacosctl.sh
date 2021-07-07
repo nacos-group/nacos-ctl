@@ -1,3 +1,3 @@
 #example shell
 #please fill the jar file path manually
-java -jar ./nacosctl-v1.0.0-Beta.jar "$@"
+java -jar ./nacosctl-1.0.0.jar "$@"

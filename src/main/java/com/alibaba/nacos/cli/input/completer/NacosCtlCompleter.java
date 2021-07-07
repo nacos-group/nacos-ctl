@@ -17,56 +17,58 @@ import java.util.List;
  * @author lehr
  */
 public class NacosCtlCompleter implements Completer {
-
-  private List<Completer> completers;
-
-  public NacosCtlCompleter() throws HandlerException {
-    try {
-      completers = CompleterFactory.loadAll();
-    } catch (Exception e) {
-      throw new HandlerException("failed to load completer groups",e);
+    
+    private List<Completer> completers;
+    
+    public NacosCtlCompleter() throws HandlerException {
+        try {
+            completers = CompleterFactory.loadAll();
+        } catch (Exception e) {
+            throw new HandlerException("failed to load completer groups", e);
+        }
     }
-  }
-
-  @Override
-  public int complete(String buffer, int cursor, List<CharSequence> candidates) {
-    Preconditions.checkNotNull(candidates);
-    List<Completion> completions = new ArrayList(this.completers.size());
-    int max = -1;
-    Iterator var6 = this.completers.iterator();
-
-    while (var6.hasNext()) {
-      Completer completer = (Completer) var6.next();
-      Completion completion = new Completion(candidates);
-      completion.complete(completer, buffer, cursor);
-      max = Math.max(max, completion.cursor);
-      completions.add(completion);
+    
+    @Override
+    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
+        Preconditions.checkNotNull(candidates);
+        List<Completion> completions = new ArrayList(this.completers.size());
+        int max = -1;
+        Iterator var6 = this.completers.iterator();
+        
+        while (var6.hasNext()) {
+            Completer completer = (Completer) var6.next();
+            Completion completion = new Completion(candidates);
+            completion.complete(completer, buffer, cursor);
+            max = Math.max(max, completion.cursor);
+            completions.add(completion);
+        }
+        
+        var6 = completions.iterator();
+        
+        while (var6.hasNext()) {
+            Completion completion = (Completion) var6.next();
+            if (completion.cursor == max) {
+                candidates.addAll(completion.candidates);
+            }
+        }
+        
+        return max;
     }
-
-    var6 = completions.iterator();
-
-    while (var6.hasNext()) {
-      Completion completion = (Completion) var6.next();
-      if (completion.cursor == max) {
-        candidates.addAll(completion.candidates);
-      }
+    
+    private class Completion {
+        
+        public final List<CharSequence> candidates;
+        
+        public int cursor;
+        
+        public Completion(List<CharSequence> candidates) {
+            Preconditions.checkNotNull(candidates);
+            this.candidates = new LinkedList(candidates);
+        }
+        
+        public void complete(Completer completer, String buffer, int cursor) {
+            Preconditions.checkNotNull(completer);
+            this.cursor = completer.complete(buffer, cursor, this.candidates);
+        }
     }
-
-    return max;
-  }
-
-  private class Completion {
-    public final List<CharSequence> candidates;
-    public int cursor;
-
-    public Completion(List<CharSequence> candidates) {
-      Preconditions.checkNotNull(candidates);
-      this.candidates = new LinkedList(candidates);
-    }
-
-    public void complete(Completer completer, String buffer, int cursor) {
-      Preconditions.checkNotNull(completer);
-      this.cursor = completer.complete(buffer, cursor, this.candidates);
-    }
-  }
 }
