@@ -6,7 +6,7 @@
 
     <groupId>com.alibaba.nacos</groupId>
     <artifactId>nacosctl</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
