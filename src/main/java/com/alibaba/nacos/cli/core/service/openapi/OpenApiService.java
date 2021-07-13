@@ -309,7 +309,7 @@ public class OpenApiService {
   }
   
   public List<ClusterVo> listCluster(String str, Integer pageNo, Integer pageSize) throws HandlerException {
-    HashMap<String, Object> params = new HashMap<>();
+    HashMap<String, Object> params = new HashMap<>(3);
     params.put("keyword", str);
     params.put("pageNo", pageNo);
     params.put("pageSize", pageSize);
@@ -319,5 +319,9 @@ public class OpenApiService {
     Type type = new TypeToken<List<ClusterVo>>(){}.getType();
     List<ClusterVo> list = gson.fromJson(data.toString(), type);
     return list;
+  }
+  
+  public void deleteClusterNode(String keyword) throws HandlerException {
+      httpProvider.nacosRequestJson(POST, CLUSTER_URL + "/server/leave", gson.toJson(Arrays.asList(keyword)));
   }
 }

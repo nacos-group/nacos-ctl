@@ -223,4 +223,8 @@ public class LogicHandler {
             throws HandlerException {
         return openApiService.listCluster(str, pageNo, pageSize);
     }
+    
+    public static void deleteClusterNode(String keyword) throws HandlerException {
+        openApiService.deleteClusterNode(keyword);
+    }
 }

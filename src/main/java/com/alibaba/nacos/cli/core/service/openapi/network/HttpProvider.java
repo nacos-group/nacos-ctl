@@ -10,6 +10,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -120,6 +121,28 @@ public class HttpProvider {
 
     try {
       HttpRequestBase req = generateRequest(method, url, params);
+      String ret = sendRequest(req);
+      if (ret != null && ret.contains(FORBIDDEN)) {
+        throw new HandlerException("403 Forbidden! Please check your permission.");
+      }
+      return ret;
+    } catch (HandlerException e){
+      throw e;
+    } catch (IOException e) {
+      throw new HandlerException("Failed to send request, please check your network.");
+    } catch (Exception e) {
+      throw new HandlerException("Failed to build request.");
+    }
+  }
+  
+  public String nacosRequestJson(Method method, String path, String json)
+          throws HandlerException {
+    try{
+      String url = getNacosUrl() + "/v1" + path;
+      HttpRequestBase req = generateRequest(method, url, new ArrayList<>());
+      HttpPost postReq = (HttpPost)req;
+      postReq.setHeader("Content-type","application/json; charset=utf-8");
+      postReq.setEntity(new StringEntity(json, "UTF-8"));
       String ret = sendRequest(req);
       if (ret != null && ret.contains(FORBIDDEN)) {
         throw new HandlerException("403 Forbidden! Please check your permission.");

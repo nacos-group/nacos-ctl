@@ -30,9 +30,6 @@ public class NacosClusterList implements Runnable {
     @CommandLine.Option(names = {"-i", "--ip"}, paramLabel = "<ip>", description = "Cluster node ip.")
     String ip = "";
     
-    @CommandLine.Option(names = {"-p", "--port"}, paramLabel = "<port>", description = "Cluster node port.")
-    String port = "";
-    
     @CommandLine.Option(names = {"-n", "--pageNo"}, paramLabel = "<pageNo>", description = "Page number.")
     Integer pageNo = 1;
     
@@ -42,14 +39,9 @@ public class NacosClusterList implements Runnable {
     @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
     @Override
     public void run() {
-        String keyword = ip;
-        if (!ip.isEmpty() && !port.isEmpty()) {
-            keyword += ":";
-        }
-        keyword += port;
         try {
             System.out.println(
-                    drawingTable(LogicHandler.listCluster(keyword, pageNo, pageSize)).render()
+                    drawingTable(LogicHandler.listCluster(ip, pageNo, pageSize)).render()
             );
         } catch (HandlerException e) {
             System.out.println(e.getMessage());
