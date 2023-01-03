@@ -22,7 +22,6 @@ import static com.alibaba.nacos.ctl.command.utils.HintUtils.USAGE_INSTANCE;
         NacosInstanceGet.class})
 public class NacosInstance implements Runnable {
     
-    
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec;
     

@@ -27,10 +27,15 @@ import static com.alibaba.nacos.ctl.command.utils.HintUtils.USAGE_METRICS;
 @CommandLine.Command(name = NAME_METRICS, sortOptions = SORT_OPTIONS, headerHeading = HEADER_HEADING, synopsisHeading = SYNOPSIS_HEADING, descriptionHeading = DESCRIPTION_HEADING, parameterListHeading = PARAMETER_LIST_HEADING, optionListHeading = OPTION_LIST_HEADING, header = USAGE_METRICS, description = DESCRIPTION_METRICS, subcommands = {
         CommandLine.HelpCommand.class})
 @Deprecated
-public class NacosMetrics implements Runnable {
+public class NacosMetrics extends NacosCommand {
     
     @CommandLine.Parameters(paramLabel = "<module>", description = "The module name of the metrics")
     public Module module;
+    
+    @Override
+    public String getCommandName() {
+        return NAME_METRICS;
+    }
     
     @Override
     public void run() {

@@ -1,6 +1,9 @@
 package com.alibaba.nacos.ctl.bootstrap;
 
+import com.alibaba.nacos.ctl.bootstrap.command.NacosBootstrapCommand;
+import com.alibaba.nacos.ctl.command.NacosCommand;
 import com.alibaba.nacos.ctl.command.NacosCtl;
+import com.alibaba.nacos.ctl.command.spi.NacosCommandLoader;
 import com.alibaba.nacos.ctl.core.LogicHandler;
 import com.alibaba.nacos.ctl.core.exception.HandlerException;
 import com.alibaba.nacos.ctl.intraction.input.InputGetter;
@@ -21,8 +24,12 @@ public class ClientMain {
         
         System.out.println("Loading Nacos client sdk...\n");
         LogicHandler.init();
+    
+        System.out.println("Loading Extension commands...");
+        NacosCommandLoader.getInstance().loadCommands();
+        System.out.println("Loading Extension commands finish\n");
         
-        new CommandLine(new NacosCtl()).execute(args);
+        new CommandLine(new NacosBootstrapCommand()).execute(args);
         
         loopExecute(InputGetter.getInstance());
     }
@@ -30,6 +37,10 @@ public class ClientMain {
     private static void loopExecute(InputGetter in) {
         
         String[] args;
+        CommandLine commandLine = new CommandLine(new NacosCtl());
+        for (NacosCommand each : NacosCommandLoader.getInstance().getLoadedCommands()) {
+            commandLine.getCommandSpec().addSubcommand(each.getCommandName(), new CommandLine(each));
+        }
         
         // 循环执行命令
         while (true) {
@@ -41,7 +52,8 @@ public class ClientMain {
                 continue;
             }
             // 给Picocli执行命令
-            int ret = new CommandLine(new NacosCtl()).execute(args);
+
+            int ret = commandLine.execute(args);
             // 特殊的流程控制，通过返回值来判断,-1是退出，-2是清屏
             if (ret == -1) {
                 break;

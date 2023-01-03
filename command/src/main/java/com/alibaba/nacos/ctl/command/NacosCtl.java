@@ -5,19 +5,13 @@ import com.alibaba.nacos.ctl.command.instance.NacosInstance;
 import com.alibaba.nacos.ctl.command.namespace.NacosNamespace;
 import com.alibaba.nacos.ctl.command.service.NacosService;
 import com.alibaba.nacos.ctl.command.switches.NacosSwitch;
-import com.alibaba.nacos.ctl.core.config.ConfigLoader;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.alibaba.nacos.ctl.command.utils.HintUtils.APP_NAME;
 import static com.alibaba.nacos.ctl.command.utils.HintUtils.CLI_DESCRIPTION;
 import static com.alibaba.nacos.ctl.command.utils.HintUtils.COMMAND_LIST_HEADING;
 import static com.alibaba.nacos.ctl.command.utils.HintUtils.FOOTER;
-import static com.alibaba.nacos.ctl.command.utils.HintUtils.GREETING;
 import static com.alibaba.nacos.ctl.command.utils.HintUtils.MIXIN_STANDARD_HELP_OPTIONS;
 import static com.alibaba.nacos.ctl.command.utils.HintUtils.VERSION_NAME;
 
@@ -33,45 +27,10 @@ import static com.alibaba.nacos.ctl.command.utils.HintUtils.VERSION_NAME;
         NacosUse.class,
         // NacosWatch.class,
 })
-public class NacosCtl implements Runnable {
-    
-    @CommandLine.Option(names = {"-e",
-            "--endpoint"}, paramLabel = "<endpoint ip>", description = "The Nacos-Server host Ip.")
-    private String host;
-    
-    @CommandLine.Option(names = {"-p", "--port"}, paramLabel = "<port>", description = "The port of Nacos-Server.")
-    private Integer port;
-    
-    @CommandLine.Option(names = {"-u",
-            "--username"}, paramLabel = "<username>", description = "Nacos authentication username.")
-    private String username;
-    
-    @CommandLine.Option(names = {"-pswd",
-            "--password"}, paramLabel = "<password>", description = "Nacos password username.")
-    private String password;
-    
-    @CommandLine.Option(names = {"-ak", "--accessKey"}, paramLabel = "<accessKey>", description = "Nacos access key.")
-    private String accessKey;
-    
-    @CommandLine.Option(names = {"-sk", "--secretKey"}, paramLabel = "<secretKey>", description = "Nacos secret key.")
-    private String secretKey;
+public class NacosCtl extends NacosCommand {
     
     @Override
-    public void run() {
-        System.out.println(GREETING);
-        Map<String, String> confs = new HashMap<>();
-        for (Field f : this.getClass().getDeclaredFields()) {
-            if (f.isAnnotationPresent(CommandLine.Option.class)) {
-                try {
-                    Object o = f.get(this);
-                    if (o != null) {
-                        confs.put(f.getName(), o.toString());
-                    }
-                } catch (Exception e) {
-                    //todo
-                }
-            }
-        }
-        ConfigLoader.preload(confs);
+    public String getCommandName() {
+        return APP_NAME;
     }
 }
