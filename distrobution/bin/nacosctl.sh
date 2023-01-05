@@ -43,6 +43,7 @@ export SERVER="nacosctl"
 export JAVA_HOME
 export JAVA="$JAVA_HOME/bin/java"
 export BASE_DIR=`cd $(dirname $0)/..; pwd`
+export CONFIG_DIR=file:${BASE_DIR}/conf/
 
 #===========================================================================================
 # JVM Configuration
@@ -57,6 +58,7 @@ else
   JAVA_OPT_EXT_FIX="-Djava.ext.dirs=${JAVA_HOME}/jre/lib/ext:${JAVA_HOME}/lib/ext"
 fi
 
+JAVA_OPT="${JAVA_OPT} -Dconfig.dir=${CONFIG_DIR}"
 JAVA_OPT="${JAVA_OPT} -jar ${BASE_DIR}/target/${SERVER}.jar"
 JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
 JAVA_OPT="${JAVA_OPT} --logging.config=${BASE_DIR}/conf/logback.xml"

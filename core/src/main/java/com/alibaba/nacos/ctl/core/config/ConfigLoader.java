@@ -1,17 +1,19 @@
 package com.alibaba.nacos.ctl.core.config;
 
+import java.io.InputStream;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,13 +30,16 @@ public class ConfigLoader {
     
     private static void readFile() {
         try {
-            List<String> lines = Files.readAllLines(Paths.get(CONF_PATH), StandardCharsets.UTF_8);
-            Map<String, String> confs = lines.stream().peek(s -> s.trim()).filter(s -> !s.startsWith("#"))
-                    .filter(s -> s.contains("=")).map(s -> s.split("=")).filter(sa -> sa.length == 2)
-                    .collect(Collectors.toMap(s -> s[0].trim(), s -> s[1].trim()));
-            tinyDb.putAll(confs);
+            Path configFilePath = Paths.get(System.getProperty("config.dir"), CONF_PATH);
+            InputStream inputStream = Files.newInputStream(configFilePath, StandardOpenOption.READ);
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            Map<String, String> propertiesMap = properties.entrySet().stream()
+                    .collect(Collectors.toMap(e -> e.getKey().toString(), e -> e.getValue().toString()));
+            tinyDb.putAll(propertiesMap);
         } catch (Exception e) {
             //...不存在就不加载
+            e.printStackTrace();
         }
     }
     
