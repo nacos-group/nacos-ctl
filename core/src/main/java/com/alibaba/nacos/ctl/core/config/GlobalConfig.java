@@ -57,6 +57,10 @@ public class GlobalConfig {
     }
     
     private GlobalConfig() {
+        refresh();
+    }
+    
+    public void refresh() {
         boolean fillAll = ConfigLoader.fill(this);
         if (fillAll) {
             System.out.println("Successfully load all configuration.\n");

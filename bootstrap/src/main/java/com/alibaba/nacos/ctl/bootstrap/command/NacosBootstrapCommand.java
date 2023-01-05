@@ -3,6 +3,7 @@ package com.alibaba.nacos.ctl.bootstrap.command;
 import com.alibaba.nacos.ctl.command.NacosClear;
 import com.alibaba.nacos.ctl.command.NacosQuit;
 import com.alibaba.nacos.ctl.core.config.ConfigLoader;
+import com.alibaba.nacos.ctl.core.config.GlobalConfig;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -64,6 +65,9 @@ public class NacosBootstrapCommand implements Runnable {
                 }
             }
         }
-        ConfigLoader.preload(confs);
+        if (!confs.isEmpty()) {
+            ConfigLoader.preload(confs);
+            GlobalConfig.getInstance().refresh();
+        }
     }
 }
