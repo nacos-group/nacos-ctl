@@ -23,7 +23,6 @@ import static com.alibaba.nacos.ctl.command.utils.HintUtils.VERSION_NAME;
 @Command(name = APP_NAME, mixinStandardHelpOptions = MIXIN_STANDARD_HELP_OPTIONS, version = VERSION_NAME, description = CLI_DESCRIPTION, commandListHeading = COMMAND_LIST_HEADING, footer = FOOTER, subcommands = {
         CommandLine.HelpCommand.class, NacosQuit.class, NacosClear.class, NacosConfig.class, NacosNamespace.class,
         NacosInstance.class, NacosSwitch.class, NacosService.class,
-        // NacosMetrics.class,
         NacosUse.class,
         // NacosWatch.class,
 })
