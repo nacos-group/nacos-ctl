@@ -23,6 +23,7 @@ public class NacosCtlCompleter implements Completer {
     public NacosCtlCompleter() throws HandlerException {
         try {
             completers = CompleterFactory.loadAll();
+            completers.addAll(CompleterFactory.loadExtensionCompleter());
         } catch (Exception e) {
             throw new HandlerException("failed to load completer groups", e);
         }

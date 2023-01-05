@@ -13,7 +13,10 @@ import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 /**
  * 提供各种命令用到的completer group
@@ -22,6 +25,8 @@ import java.util.List;
  */
 public class CompleterFactory {
     
+    private static final String LOADED_COMPLETER = "LOAD completer(%s) finished.";
+    
     /**
      * @author lehr
      */
@@ -29,6 +34,7 @@ public class CompleterFactory {
     @Target({ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     private @interface Enabled {
+    
     
     }
     
@@ -43,6 +49,15 @@ public class CompleterFactory {
         }
         
         return completers;
+    }
+    
+    public static Collection<? extends Completer> loadExtensionCompleter() {
+        List<Completer> result = new LinkedList<>();
+        for (NacosCompleterBuilder each : ServiceLoader.load(NacosCompleterBuilder.class)) {
+            result.add(each.build());
+            System.out.println(String.format(LOADED_COMPLETER, each.getCompleterName()));
+        }
+        return result;
     }
     
     /**

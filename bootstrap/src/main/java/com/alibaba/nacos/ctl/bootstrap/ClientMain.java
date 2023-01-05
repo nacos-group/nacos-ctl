@@ -19,11 +19,13 @@ public class ClientMain {
     
     public static void main(String[] args) throws HandlerException {
         
-        System.out.println("NacosCtl Loading...\n");
+        System.out.println("NacosCtl Loading...");
         InputGetter.init();
+        System.out.println("NacosCtl Load finished.\n");
         
-        System.out.println("Loading Nacos client sdk...\n");
+        System.out.println("Loading Nacos client sdk...");
         LogicHandler.init();
+        System.out.println("Loading Nacos client sdk finished.\n");
     
         System.out.println("Loading Extension commands...");
         NacosCommandLoader.getInstance().loadCommands();
