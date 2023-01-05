@@ -31,6 +31,12 @@ public class ConfigLoader {
     private static void readFile() {
         try {
             Path configFilePath = Paths.get(System.getProperty("config.dir"), CONF_PATH);
+            if (!Files.exists(configFilePath)) {
+                System.out.println(
+                        String.format("[WARN] Can't find %s file in dir %s, skip load properties from file.", CONF_PATH,
+                                System.getProperty("config.dir")));
+                return;
+            }
             InputStream inputStream = Files.newInputStream(configFilePath, StandardOpenOption.READ);
             Properties properties = new Properties();
             properties.load(inputStream);
@@ -39,7 +45,6 @@ public class ConfigLoader {
             tinyDb.putAll(propertiesMap);
         } catch (Exception e) {
             //...不存在就不加载
-            e.printStackTrace();
         }
     }
     
@@ -65,7 +70,7 @@ public class ConfigLoader {
     public static boolean fill(Object o) {
         boolean flag = true;
         for (Field f : o.getClass().getDeclaredFields()) {
-            if (f.isAnnotationPresent(FromPropertie.class)) {
+            if (f.isAnnotationPresent(FromProperties.class)) {
                 String name = f.getName();
                 String value = tinyDb.get(name);
                 if (value != null) {
@@ -92,7 +97,7 @@ public class ConfigLoader {
     @Documented
     @Target({ElementType.FIELD})
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface FromPropertie {
+    public @interface FromProperties {
     
     }
 }

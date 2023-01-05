@@ -1,6 +1,6 @@
 package com.alibaba.nacos.ctl.core.config;
 
-import com.alibaba.nacos.ctl.core.config.ConfigLoader.FromPropertie;
+import com.alibaba.nacos.ctl.core.config.ConfigLoader.FromProperties;
 
 import java.util.Properties;
 
@@ -22,25 +22,25 @@ public class GlobalConfig {
     private String namespaceId = "";
     
     
-    @FromPropertie
+    @FromProperties
     private boolean confirmEnabled = true;
     
-    @FromPropertie
+    @FromProperties
     private String host = "localhost";
     
-    @FromPropertie
+    @FromProperties
     private Integer port = 8848;
     
-    @FromPropertie
+    @FromProperties
     private String username = "nacos";
     
-    @FromPropertie
+    @FromProperties
     private String password = "nacos";
     
-    @FromPropertie
+    @FromProperties
     private String accessKey = "accessKey";
     
-    @FromPropertie
+    @FromProperties
     private String secretKey = "secretKey";
     
     
@@ -59,7 +59,7 @@ public class GlobalConfig {
     private GlobalConfig() {
         boolean fillAll = ConfigLoader.fill(this);
         if (fillAll) {
-            System.out.println("Successfully load all configuration from file.\n");
+            System.out.println("Successfully load all configuration.\n");
         }
         System.out.println(this);
     }

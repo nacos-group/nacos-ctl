@@ -10,7 +10,7 @@ public class HintUtils {
      */
     public static final String APP_NAME = "nacosctl";
     
-    public static final String VERSION_NAME = "v1.0.1-Beta";
+    public static final String VERSION_NAME = "v1.0.1";
     
     public static final String CLI_DESCRIPTION = "NacosCtl is a fast, scalable, helpful client that can let you connect to nacos-server easily.";
     
