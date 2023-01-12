@@ -1,8 +1,11 @@
 package com.alibaba.nacos.ctl.core.service.openapi.network;
 
+import com.alibaba.nacos.common.http.param.Header;
+import com.alibaba.nacos.ctl.core.config.ConfigLoader;
 import com.alibaba.nacos.ctl.core.config.GlobalConfig;
 import com.alibaba.nacos.ctl.core.exception.HandlerException;
 import com.alibaba.nacos.ctl.core.service.openapi.network.bean.HttpDelete;
+import com.alibaba.nacos.ctl.core.utils.AuthUtils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.NameValuePair;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import static com.alibaba.nacos.ctl.core.service.openapi.network.HttpProvider.Method.DELETE;
 import static com.alibaba.nacos.ctl.core.service.openapi.network.HttpProvider.Method.GET;
@@ -40,6 +44,10 @@ public class HttpProvider {
     
     private String authStr = "";
     
+    private String serverIdentityKey;
+    
+    private String serverIdentityValue;
+    
     public HttpProvider() {
         String username = config.getUsername();
         String password = config.getPassword();
@@ -48,6 +56,9 @@ public class HttpProvider {
         } catch (HandlerException e) {
             System.out.println("nacos login failed:" + e.getMessage());
         }
+        Properties properties = ConfigLoader.toProperties();
+        serverIdentityKey = properties.getProperty("serverIdentityKey", "");
+        serverIdentityValue = properties.getProperty("serverIdentityValue", "");
     }
     
     private static final String LOGIN_FAILED = "unknown user!";
@@ -118,13 +129,20 @@ public class HttpProvider {
         // 拼接完整url
         String url = getNacosUrl() + "/v1" + path;
         List<NameValuePair> params = new ArrayList<>();
+        String accessKey = GlobalConfig.getInstance().getAccessKey();
+        String secretKey = GlobalConfig.getInstance().getSecretKey();
+        Map<String, String> tempStringParameters = new HashMap<>(parameterMap.size());
         if (parameterMap != null) {
-            parameterMap.entrySet().forEach(e -> {
-                if (e.getValue() != null) {
-                    params.add(new BasicNameValuePair(e.getKey(), String.valueOf(e.getValue())));
-                }
-            });
+            parameterMap.forEach((key, value) -> tempStringParameters.put(key, String.valueOf(value)));
         }
+        Header header = AuthUtils.buildConfigSpas(tempStringParameters, accessKey, secretKey);
+        AuthUtils.injectNamingSpas(tempStringParameters, accessKey, secretKey);
+        AuthUtils.injectIdentity(header, serverIdentityKey, serverIdentityValue);
+        tempStringParameters.forEach((key, value) -> {
+            if (value != null) {
+                params.add(new BasicNameValuePair(key, value));
+            }
+        });
         
         // 根据请求类型不同，构造请求，拼接参数，发送请求
         

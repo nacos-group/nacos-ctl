@@ -1,10 +1,10 @@
 package com.alibaba.nacos.ctl.core;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.alibaba.nacos.ctl.core.config.GlobalConfig;
 import com.alibaba.nacos.ctl.core.bean.ConfigVO;
 import com.alibaba.nacos.ctl.core.bean.NamespaceVO;
 import com.alibaba.nacos.ctl.core.bean.ServiceVO;
+import com.alibaba.nacos.ctl.core.config.GlobalConfig;
 import com.alibaba.nacos.ctl.core.exception.HandlerException;
 import com.alibaba.nacos.ctl.core.service.openapi.OpenApiService;
 import com.alibaba.nacos.ctl.core.service.sdk.SdkConfigService;
@@ -37,6 +37,20 @@ public class LogicHandler {
         
         sdkConfigService = new SdkConfigService();
         sdkNamingService = new SdkNamingService();
+    }
+    
+    public static void refresh() {
+        try {
+            sdkConfigService.shutdown();
+            sdkNamingService.shutdown();
+            config = GlobalConfig.getInstance();
+            openApiService = new OpenApiService();
+            sdkConfigService = new SdkConfigService();
+            sdkNamingService = new SdkNamingService();
+        } catch (Exception e) {
+            System.out.println("refresh Logic Handler failed.");
+            e.printStackTrace();
+        }
     }
     
     /**
