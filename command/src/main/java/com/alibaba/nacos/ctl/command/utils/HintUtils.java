@@ -51,6 +51,8 @@ public class HintUtils {
     
     public static final String NAME_QUIT = "quit";
     
+    public static final String NAME_QUIT_ALIAS = "stop";
+    
     public static final String USAGE_QUIT = "Quit from the Cli";
     
     public static final String DESCRIPTION_QUIT = "Quit from the cli, and close the connection with current server.";
