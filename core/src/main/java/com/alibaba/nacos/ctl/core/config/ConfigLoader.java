@@ -91,6 +91,12 @@ public class ConfigLoader {
         return flag;
     }
     
+    public static Properties toProperties() {
+        Properties result = new Properties();
+        result.putAll(tinyDb);
+        return result;
+    }
+    
     /**
      * @author lehr
      */
