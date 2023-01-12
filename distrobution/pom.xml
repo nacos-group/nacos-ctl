@@ -20,6 +20,7 @@
     </dependencies>
     
     <build>
+        <finalName>nacos-ctl</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
