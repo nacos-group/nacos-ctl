@@ -31,6 +31,7 @@ public class InputGetter {
     public static void init() throws HandlerException {
         try {
             instance.console = new ConsoleReader();
+            instance.console.setHandleUserInterrupt(true);
             instance.console.addCompleter(new NacosCtlCompleter());
         } catch (IOException e) {
             throw new HandlerException("Failed to load JLine", e);
