@@ -131,7 +131,7 @@ public class HttpProvider {
         List<NameValuePair> params = new ArrayList<>();
         String accessKey = GlobalConfig.getInstance().getAccessKey();
         String secretKey = GlobalConfig.getInstance().getSecretKey();
-        Map<String, String> tempStringParameters = new HashMap<>(parameterMap.size());
+        Map<String, String> tempStringParameters = new HashMap<>();
         if (parameterMap != null) {
             parameterMap.forEach((key, value) -> tempStringParameters.put(key, String.valueOf(value)));
         }
