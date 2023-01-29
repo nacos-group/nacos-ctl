@@ -19,6 +19,7 @@ public class AuthUtils {
     
     public static Header buildConfigSpas(Map<String, String> paramValues, String accessKey, String secretKey) {
         Header header = Header.newInstance();
+        header.getHeader().remove(HttpHeaderConsts.CONTENT_TYPE);
         if (StringUtils.isNotEmpty(accessKey) && StringUtils.isNotEmpty(secretKey)) {
             header.addParam("Spas-AccessKey", accessKey);
             Map<String, String> signHeaders = SpasAdapter.getSignHeaders(paramValues, secretKey);

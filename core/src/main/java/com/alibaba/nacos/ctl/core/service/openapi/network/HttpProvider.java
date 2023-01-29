@@ -148,6 +148,7 @@ public class HttpProvider {
         
         try {
             HttpRequestBase req = generateRequest(method, url, params);
+            header.getHeader().forEach(req::addHeader);
             String ret = sendRequest(req);
             if (ret != null && ret.contains(FORBIDDEN)) {
                 throw new HandlerException("403 Forbidden! Please check your permission.");
