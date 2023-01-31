@@ -1,5 +1,6 @@
 package com.alibaba.nacos.ctl.command.config;
 
+import com.alibaba.nacos.api.utils.StringUtils;
 import com.alibaba.nacos.ctl.core.LogicHandler;
 import com.alibaba.nacos.ctl.core.bean.ConfigVO;
 import com.alibaba.nacos.ctl.core.exception.HandlerException;
@@ -38,9 +39,17 @@ public class NacosConfigList implements Runnable {
     
     @Override
     public void run() {
-        
+        String search = "accurate";
         try {
-            List<ConfigVO> list = LogicHandler.listConfigs(dataId, group, pageNo, pageSize);
+            if (StringUtils.isEmpty(group)) {
+                group = "**";
+                search = "blur";
+            }
+            if (StringUtils.isEmpty(dataId)) {
+                dataId = "**";
+                search = "blur";
+            }
+            List<ConfigVO> list = LogicHandler.listConfigs(dataId, group, pageNo, pageSize, search);
             int counter = 1;
             AsciiTable at = new AsciiTable();
             at.getContext().setWidth(60);

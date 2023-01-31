@@ -1,5 +1,6 @@
 package com.alibaba.nacos.ctl.core.service.openapi;
 
+import com.alibaba.nacos.api.utils.StringUtils;
 import com.alibaba.nacos.ctl.core.config.GlobalConfig;
 import com.alibaba.nacos.ctl.core.bean.ConfigVO;
 import com.alibaba.nacos.ctl.core.bean.NamespaceVO;
@@ -58,7 +59,7 @@ public class OpenApiService {
         return httpProvider.nacosRequest(PUT, SWITCH_URL, params);
     }
     
-    public List<ConfigVO> listConfigs(String dataId, String group, Integer pageNo, Integer pageSize)
+    public List<ConfigVO> listConfigs(String dataId, String group, Integer pageNo, Integer pageSize, String search)
             throws HandlerException {
         
         Map<String, Object> params = new HashMap<>();
@@ -66,9 +67,10 @@ public class OpenApiService {
         params.put("group", group);
         params.put("pageNo", pageNo);
         params.put("pageSize", pageSize);
-        params.put("search", "accurate");
-        params.put("search", "accurate");
-        params.put("tenant", config.getNamespaceId());
+        params.put("search", search);
+        if (!StringUtils.isEmpty(config.getNamespaceId())) {
+            params.put("tenant", config.getNamespaceId());
+        }
         String ret = httpProvider.nacosRequest(GET, CONF_URL, params);
         
         JsonObject data = new JsonParser().parse(ret).getAsJsonObject();

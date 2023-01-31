@@ -91,9 +91,10 @@ public class LogicHandler {
         sdkConfigService.publishConfig(dataId, group, content, type);
     }
     
-    public static List<ConfigVO> listConfigs(String dataId, String group, Integer pageNo, Integer pageSize)
+    public static List<ConfigVO> listConfigs(String dataId, String group, Integer pageNo, Integer pageSize,
+            String search)
             throws HandlerException {
-        return openApiService.listConfigs(dataId, group, pageNo, pageSize);
+        return openApiService.listConfigs(dataId, group, pageNo, pageSize, search);
     }
     
     public static void deleteConfig(String group, String dataId) throws HandlerException {
